@@ -1,94 +1,130 @@
 #include <iostream>
-using namespace std;
+#include<fstream>
+#include<vector>
+#include<algorithm>
 #include <string>
 
+using namespace std;
 
-    int main() {
+struct rgb{
+  int r, g ,b;
+};
 
-        string x;
-        int cip = 5;
-        char type;
-        cout << "input type of colorblindess: Tritanopia A, Protanopia B or Deuteranopia C." << endl;
-        cin >> type;
+bool visibleWithin(int red, int green, int blue, const string& type);//checking if a color is too dark to see
+bool colorSimilarity(const rgb& color1, const rgb& color2, double lowestVal = 30.0);//compares how close two colors are to each other
+void saveFinalEvaluation(const vector<rgb>& colorPalette, const string& colorBlindnessType);//using void to get color pallette input and then to outpu wether its too close in color or not and whethter its visible
 
-        switch (type){
-        case 'A':
-            cout << "Tritanopia" << endl;
-            break;
-        case 'B':
-            cout << "Protanopia" << endl;
-            break;
-        case 'C':
-            cout << "Deuteranopia" << endl;
-            break;
-        default: 
-            cout << "Not an option please pick A, B or C" << endl;
-            return 1;
-        }
-            cout << "enter number of colors in your palette: " << endl; 
-            cin >> cip;
+int main (){
 
-        if (cip > 5 || cip <= 0) {
-            cout << "unavailable number of colors in palette." << endl;
-            return 1;
-        }
+  string typesToEvaluateFor[3] = {"protanopia, tritanopia, deuteranopia"};
+  vector<rgb> colorPalette;  //using struct to declare palette under rgb data type
+  string colorBlindnessType;
+  int colorMax = 3;         //sets the max amount of colors to be compared in a palette at 3
 
-        int R[5], G[5], B[5];
-
-        for (int i = 0; i < cip; ++i){
-        
-            cout << "enter color " << (i+1) << " in RGB number form" << endl;//i=0 starts at 0-4 for 5 cases
-            cin >> R[i] >> G[i] >> B[i];
-
-        if (R[i] >= 0 && R[i] <= 255 && G[i] >= 0 && G[i] <= 255 && B[i] >= 0 && B[i] <= 255) {  //making sure the rgb values are between 0 and 255 for each color
-            bool red = (R[i] > G[i] && R[i] > B[i] && R[i] > 50);
-            bool blue = (B[i] > G[i] && B[i] > R[i] && B[i] >50);
-            bool green = (G[i] > R[i] && G[i] > B[i] && G[i] > 50);
-       
-        if (type == 'A'){ //Tri--blue blind
-            if (red || green) {
-            cout << "color " << (i+1) << " is visible to people with Tritanopia!" << endl;
-
-            }else if (blue)     
-            cout << "color " << (i+1) << " is not visible to people with Tritanopia!" << endl;  
-             else {
-                    cout << "color " << (i+1) << " is neutral(grey/black/white)";
-            } 
-        }                   
-
-        if (type == 'B'){ //Pro--Red blind
-            if (blue || green) {
-            cout << "color " << (i+1) << " is visible to people with Protanopia!" << endl;
-
-            }else if (red) {    
-            cout << "color " << (i+1) << " is not visible to people with Protanopia!" << endl;             
-            }else {
-                    cout << "color " << (i+1) << " is neutral(grey/black/white)";
-
-            }
-        }
-        if (type == 'C'){ //Deu--green blind
-            if (blue || red) {
-            cout << "color " << (i+1) << " is visible to people with Deuteranopia!" << endl;
-
-            }else if (green){ 
-            cout << "color " << (i+1) << " is not visible to people with Deuteranopia!" << endl;             
-            }else {
-                    cout << "color " << (i+1) << " is neutral(grey/black/white)";
-            }
-        }
-
-     
-        }
-            else{
-            cout << "invalid color selection. Number above 255 or below 0." << endl;
-            return 1;
-              }
-    
+  cout << "Hello! Please enter type of colorblindness below:\n (protanopia, deuteranopia, tritanopia)" << endl;
+  cin >> colorBlindnessType;
+    while(colorBlindnessType != "protanopia" && colorBlindnessType !="deuteranopia" && colorBlindnessType != "tritanopia"){
+      cout << "it's not that hard to spell bruh lock in..." << endl;
+      cin >> colorBlindnessType;
     }
-        return 0;
+
+    
+
+  cout << "Evaluating color palette visibility for " << colorBlindnessType << endl;
+
+  cout << "Pick three colors in a color palette." << endl;
+
+    for(int i = 0; i < colorMax; i++){     //gets color palette from user
+      rgb hold;
+
+      cout << "Please enter color " << (i + 1) << " keeping the values within rgb range, 0-255:" << endl; //displays color 1,2,3 rather than 0,1,2 by starting at i+1
+      cin >> hold.r >> hold.g >> hold.b;    //keeps three colors entered then evaluates if theyre within valid rgb range
+
+      if(hold.r >= 0 && hold.r <=255 && hold.g >= 0 && hold.g <=255 && hold.b >= 0 && hold.b <=255){ //checks that colors are in proper rgb range
+        cout << "Color within range. storing in color palette.." << endl;
+        colorPalette.push_back(hold);
+      } else {    //will go back to the color entered incorrectly for the user to re-enter
+        cout << "Colors out of range...re-enter please." << endl;
+        i--;
+      }
+      
+
+      
+    }
+
+    ofstream outFile("color_palette.txt");//stores the entered colors in a file then pulls from the file later to compare colors to each other
+    outFile << "You chose: " << colorBlindnessType << "\n\n";
+
+      saveFinalEvaluation(colorPalette, colorBlindnessType); //saves color evaluation for a type of colorblindness
+
+    return 0;
 }
 
+bool visibleWithin(int red, int green, int blue, const string& type){   //checking if a color is too dark to see
+  if(type == "protanopia"){
+        return red >= 30 && blue >= 5 && green >= 5;    //returns whether bool is true or false
+    }
+  if (type == "deuteranopia"){                          //if any types spelled wrong then all colors appear "not vsibile" ie..tooo dark even if that snot true
+        return red >= 15 && blue >= 5 && green >= 15;
+    }
+  if(type == "tritanopia"){
+        return red >= 20 && blue >= 20 && green >= 10;
+    }
+    
+    return false;     //if any above conditions are not true the bool returns false
+}
+
+bool colorSimilarity(const rgb& color1, const rgb& color2, double lowestVal){//compares how close two colors are to each other
+  int rDiff = color1.r - color2.r;
+  int gDiff = color1.g - color2.g;
+  int bDiff = color1.b - color2.b;
+
+    //use squared euclidian distance--I wasn't sure how to use standard in c++ so I used gemini to ask how I could impement the equation into my code
+  int euclidianSquaredDistance = 2 * rDiff * rDiff + 4 * gDiff * gDiff + 3 * bDiff * bDiff;
+    //compares against the lowest value that rgb can be from each other
+  return euclidianSquaredDistance < (lowestVal * lowestVal);
+}
+
+void saveFinalEvaluation(const vector<rgb>& colorPalette, const string& colorBlindnessType) {//using void to get color pallette input and then to outpu wether its too close in color or not and whethter its visible
+    ofstream outFile("color_palette.txt");
+    outFile << "You chose: " << colorBlindnessType << "\n\n";
+
+      for(size_t i = 0; i < colorPalette.size(); i++){
+        bool isVisible = visibleWithin(colorPalette[i].r, colorPalette[i].g, colorPalette[i].b, colorBlindnessType);
+        string status;
+
+        if(isVisible){
+          status = "Visible";
+        } else {
+          status = "Not visible";
+        }
+            cout << "Color " << i + 1 << ": " << status << endl;
+            outFile << "Color " << (i + 1) << " (" << colorPalette[i].r << ", " << colorPalette[i].g << ", " << colorPalette[i].b << "): " << status << "\n";
+      }
+        bool colorsTooSimilar = false;
+
+  for (size_t i = 0; i < colorPalette.size(); i++){//to evaluate two colors I have to use two different indexs'--i for color "1" j fpr color "2"--colors arent actually one and two but the fisrt and second to be compared
+      for(size_t j = i + 1; j < colorPalette.size(); j++){
+        if(colorSimilarity(colorPalette[i], colorPalette[j])){
+
+          cout << "Color " << (i + 1) << " and color " << (j + 1) << " are too close in color for someone with " << colorBlindnessType << " to distinct between." << endl;
+          outFile << "Color " << (i + 1) << " and color " << (j + 1) << " are too close in color for someone with " << colorBlindnessType << " to distinct between.\n\n";
+          
+          colorsTooSimilar = true;
+      } else{
+        cout << "Color " << (i + 1) << " and color " << (j + 1) << " are visible and not too close in color." << endl;
+        outFile << "Color " << (i + 1) << " and color " << (j + 1) << " are visible and not too close in color.\n";
+      }
+
+    } 
+  }
+
+   if (!colorsTooSimilar){
+        cout << "Colors are all visible to somone with " << colorBlindnessType << endl;
+        outFile << "Colors are all visible to somone with" << colorBlindnessType << "\n\n";
+    }
+    outFile.close();
+}
 
 
        
