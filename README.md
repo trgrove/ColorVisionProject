@@ -1,7 +1,7 @@
 # Colors Visible to Three Types of Colorblindness
 ## Description
 
-**version 1.0**
+**version 1.0** 
 
 This code allows you to test for either Protanopia, Tritanopia or Deuteranopia. You chose one of the three as the first step. you then select the number of colors in your palette, up to 5 are allowed. One color at a time, you input your colors in RGB color form. "color 1:"  000 000 000. It will, one at a time, tell you whether your color is visible to people with the type of colorblindness chosen at the beginning of the run. If you input to large or small of a number, or select an option that is not available, the run will end and give a message explaining why.
 
