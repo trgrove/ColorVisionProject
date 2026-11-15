@@ -48,29 +48,28 @@ Here is an example of version 2.0 running:
 ```
 Hello! Please enter type of colorblindness below:
  (protanopia, deuteranopia, tritanopia)
-protasdo[a
+protanopija
 it's not that hard to spell bruh lock in...
 protanopia
 Evaluating color palette visibility for protanopia
 Pick three colors in a color palette.
 Please enter color 1 keeping the values within rgb range, 0-255:
-234 55 83
+59 130 246
 Color within range. storing in color palette..
 Please enter color 2 keeping the values within rgb range, 0-255:
-224 899 610
+60 125 444
 Colors out of range...re-enter please.
 Please enter color 2 keeping the values within rgb range, 0-255:
-112 50 93
+60 125 250
 Color within range. storing in color palette..
 Please enter color 3 keeping the values within rgb range, 0-255:
-109 59 31
+34 12 99
 Color within range. storing in color palette..
 Color 1: Visible
 Color 2: Visible
 Color 3: Visible
-Color 1 and color 2 are visible and not too close in color.
+Color 1 and color 2 are too close in color for someone with protanopia to distinct between.
 Color 1 and color 3 are visible and not too close in color.
 Color 2 and color 3 are visible and not too close in color.
-Colors are all visible to somone with protanopia
 
 ```
